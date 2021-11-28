@@ -1,5 +1,4 @@
 import { useState } from "preact/hooks"
-import { ChakraProvider, Flex, Box, FormControl, Select, Button, Text, Spacer, Link } from "@chakra-ui/react"
 
 const defaultMessage = "O O O O"
 
@@ -91,8 +90,10 @@ function Main() {
   const [outputName, setOutputName] = useState(defaultMessage)
   const [shuffling, setShuffling] = useState(false)
 
-  const onChangeSelectForm = (e: ChangeEvent<HTMLSelectElement>) => {
-    setCharCount(parseInt(e.target.value))
+  const onChangeSelectForm = (target: EventTarget) => {
+    if (target instanceof HTMLSelectElement) {
+      setCharCount(parseInt(target.value))
+    }
   }
 
   const onClickInfShuffle = () => {
@@ -124,67 +125,43 @@ function Main() {
 
   return (
     <>
-      <Flex alignItems="center" justifyContent="center" w="100vw" minH="100vh">
-        <Box textAlign="center">
-          <Box>
-            <Text
-              fontSize={{
-                base: "1.5rem",
-                sm: "1.5rem",
-                md: "3.5rem",
-                lg: "5rem",
-              }}
-              fontWeight="bold"
-            >
-              - ハロメン名前シャッフル -
-            </Text>
-          </Box>
-          <Box>
-            <Text
-              fontSize={{
-                base: "3rem",
-                sm: "3rem",
-                md: "6rem",
-                lg: "10rem",
-              }}
-            >
-              {outputName}
-            </Text>
-          </Box>
-          <FormControl id="country">
-            <Select
-              placeholder="文字数"
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => onChangeSelectForm(e)}
-              isDisabled={shuffling}
+      <div id="container">
+        <div id="wrap">
+          <div>
+            <h1>- ハロメン名前シャッフル -</h1>
+          </div>
+          <div>
+            <p class="output">{outputName}</p>
+          </div>
+          <div>
+            <select
+              onChange={({target}) => onChangeSelectForm(target as EventTarget)}
+              disabled={shuffling}
             >
               <option value="3">3</option>
-              <option value="4">4</option>
+              <option value="4" selected>4</option>
               <option value="5">5</option>
               <option value="6">6</option>
-            </Select>
-            <Spacer my={5} />
-            {shuffling ? (
-              <Button onClick={(_: Event) => onClickStopTimer()}>STOP</Button>
-            ) : (
-              <Button
-                onClick={(_: Event) => onClickInfShuffle()}
-                isDisabled={shuffling}
-                isLoading={shuffling}
-              >
-                START
-              </Button>
-            )}
-          </FormControl>
-        </Box>
-      </Flex>
+            </select>
+            <div class="buttons">
+              {shuffling ? (
+                <button onClick={(_: Event) => onClickStopTimer()}>STOP</button>
+              ) : (
+                <button
+                  onClick={(_: Event) => onClickInfShuffle()}
+                  disabled={shuffling}
+                >
+                  START
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
 
 export function App() {
-  return (
-    <ChakraProvider>
-      <Main />
-    </ChakraProvider>
-  )
+  return <Main />
 }
