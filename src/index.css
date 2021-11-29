@@ -541,3 +541,28 @@ ul {
   border-style: solid;
   box-sizing: border-box;
 }
+
+#wrap .member-lists {
+  max-width: 89vw;
+  padding: 1rem;
+}
+#wrap .member-lists h3 {
+  padding: 0 0.5rem;
+}
+#wrap .member-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#wrap .member-list > * {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+#wrap .member-list .name.bold {
+  color: crimson;
+  font-weight: bold;
+}
