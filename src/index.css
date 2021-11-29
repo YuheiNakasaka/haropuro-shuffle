@@ -145,6 +145,10 @@ ul {
   background: var(--chakra-colors-gray-100);
 }
 
+#wrap button.disabled {
+  opacity: 0.5;
+}
+
 *,
 ::before,
 ::after {

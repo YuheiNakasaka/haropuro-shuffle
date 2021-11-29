@@ -34,14 +34,12 @@ function Main() {
   const [charCount, setCharCount] = useState(4);
   const [outputName, setOutputName] = useState(defaultMessage);
   const [shuffling, setShuffling] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [latestResult, setLatestResult] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("/api/shuffle_data")
-      .then((res) => res.json<ShuffleDataResponse>())
-      .then((data: ShuffleDataResponse) => {
-        setLatestResult(data.memberNames);
-      });
+    setFetching(true);
+    fetchMembers();
   }, []);
 
   const onChangeSelectForm = (target: EventTarget) => {
@@ -50,7 +48,18 @@ function Main() {
     }
   };
 
-  const onClickInfShuffle = () => {
+  const fetchMembers = () => {
+    return fetch("/api/shuffle_data")
+      .then((res) => res.json<ShuffleDataResponse>())
+      .then((data: ShuffleDataResponse) => {
+        setLatestResult(data.memberNames);
+      })
+      .finally(() => {
+        setFetching(false);
+      });
+  };
+
+  const onClickInShuffle = () => {
     if (shuffling) return;
     count = 0;
     setShuffling(true);
@@ -73,19 +82,16 @@ function Main() {
 
   const onClickStopTimer = () => {
     // TODO: POSTのbodyがworkers側で受け取れないのでparamsで送ってる
+    count = 10001;
+    clearInterval(timer);
     window
       .fetch(`/api/shuffle_data?output=${outputName}`, {
         method: "POST",
       })
-      .finally(() => {
-        fetch("/api/shuffle_data")
-          .then((res) => res.json<ShuffleDataResponse>())
-          .then((data: ShuffleDataResponse) => {
-            setLatestResult(data.memberNames);
-          });
-        count = 10001;
-        clearInterval(timer);
+      .finally(async () => {
         setShuffling(false);
+        setFetching(true);
+        await fetchMembers();
       });
   };
 
@@ -118,8 +124,9 @@ function Main() {
                 <button onClick={(_: Event) => onClickStopTimer()}>STOP</button>
               ) : (
                 <button
-                  onClick={(_: Event) => onClickInfShuffle()}
-                  disabled={shuffling}
+                  className={fetching ? "disabled" : ""}
+                  onClick={(_: Event) => onClickInShuffle()}
+                  disabled={shuffling || fetching}
                 >
                   START
                 </button>
