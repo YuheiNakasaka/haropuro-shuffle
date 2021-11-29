@@ -135,6 +135,7 @@ function Main() {
           </div>
           <div class="member-lists">
             <h3>みんなの結果</h3>
+            {fetching && <p>Refreshing...</p>}
             <div class="member-list">
               {latestResult.map((name) => {
                 if (matchMemberName(name)) {
